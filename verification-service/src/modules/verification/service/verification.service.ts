@@ -1,7 +1,7 @@
 import { injectable } from 'inversify';
 import { IVerifiedRepoDTO, IVerifiedReposDTO } from '../dtos/verification.dto';
-import { randomNumberFromInterval } from '../../../utils/random.value';
 import { ErrorBuilder } from '../../../error/error.builder';
+import { verificationStatusMock } from '../../../mock/verification.status.mock';
 
 /**
  * Service used to execute Verification operations
@@ -20,11 +20,9 @@ class VerificationService {
       // Iterate the received ids to return a mocked response
       ids.forEach((id) => {
         if (!id) return;
-        // Validate if value is a number
-        if (Number.isNaN(Number(id))) return;
 
-        // Get random value between 604 and 606
-        const state = randomNumberFromInterval(604, 606);
+        // Get verification status
+        const state = verificationStatusMock[id] ?? 605;
 
         repositories.push({ id: Number(id), state });
       });

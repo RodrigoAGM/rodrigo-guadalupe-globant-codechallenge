@@ -33,7 +33,7 @@ model Tribe {
   name           String       @db.Char(50)
   status         Int
   organizationId Int
-  organization   Organization @relation(fields: [organizationId], references: [id])
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
   repositories   Repository[]
 }
 
@@ -44,7 +44,7 @@ model Repository {
   createTime DateTime         @default(now())
   status     RepositoryStatus
   tribeId    Int
-  tribe      Tribe            @relation(fields: [tribeId], references: [id])
+  tribe      Tribe            @relation(fields: [tribeId], references: [id], onDelete: Cascade)
   metric     Metric?
 }
 
@@ -55,5 +55,5 @@ model Metric {
   vulnerabilities Int
   hotspot         Int
   codeSmells      Int
-  repository      Repository @relation(fields: [repositoryId], references: [id])
+  repository      Repository @relation(fields: [repositoryId], references: [id], onDelete: Cascade)
 }

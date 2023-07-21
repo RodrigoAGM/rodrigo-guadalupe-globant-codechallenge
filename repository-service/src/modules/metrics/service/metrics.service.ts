@@ -48,8 +48,6 @@ class MetricsService {
         return Promise.reject(ErrorBuilder.badRequestError('El id proporcionado es inválido.'));
       }
 
-      console.log(parsedTribeId);
-
       const data = await this._client.tribe.findUnique({
         where: { id: parsedTribeId },
         include: {

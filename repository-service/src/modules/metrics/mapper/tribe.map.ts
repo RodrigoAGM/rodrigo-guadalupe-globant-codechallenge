@@ -1,9 +1,11 @@
 import { IRepositoryMetricDTO, IRepositoryMetricsDTO } from '../dtos/metrics.dto';
 import { repositoryStateToNaturalLanguage } from '../../../utils/repository.state.parser';
 import { PopulatedTribeWithMetrics } from '../../tribe/model/tribe.model';
+import { verificationStateToNaturalLanguage } from '../../../utils/verification.state.parser';
 
 function mapMetricByTribeToRepositoryMetricsDto(
-  tribe: PopulatedTribeWithMetrics
+  tribe: PopulatedTribeWithMetrics,
+  verificationDict: Record<string, number>
 ): IRepositoryMetricsDTO {
   const data: IRepositoryMetricDTO[] = [];
 
@@ -20,7 +22,7 @@ function mapMetricByTribeToRepositoryMetricsDto(
       bugs: repository.metric.bugs,
       vulnerabilities: repository.metric.vulnerabilities,
       hotspots: repository.metric.hotspot,
-      verificationState: '',
+      verificationState: verificationStateToNaturalLanguage(verificationDict[repository.id]),
       state: repositoryStateToNaturalLanguage(repository.state),
     });
   });

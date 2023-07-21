@@ -1,8 +1,11 @@
-import { injectable } from 'inversify';
+import { inject, injectable } from 'inversify';
 import { PrismaClient, RepositoryState } from '@prisma/client';
 import { ErrorBuilder } from '../../../error/error.builder';
 import { IRepositoryMetricsDTO } from '../dtos/metrics.dto';
 import { mapMetricByTribeToRepositoryMetricsDto } from '../mapper/tribe.map';
+import { HttpService } from '../../../config/http.service';
+import { Symbols } from '../../../@types';
+import { IVerifiedReposDTO } from '../dtos/verification.dto';
 
 /**
  * Service used to execute Metrics operations
@@ -12,12 +15,18 @@ class MetricsService {
   /** Prisma client instance */
   private readonly _client: PrismaClient;
 
+  /** HTTP Service client instance */
+  private readonly _httpService: HttpService;
+
   /**
    * @param {PrismaClient} prismaClient Prisma client
+   * @param {HttpService} httpService HTTP Service client
    */
   constructor(
     prismaClient: PrismaClient,
+    @inject(Symbols.HttpService) httpService: HttpService
   ) {
+    this._httpService = httpService;
     this._client = prismaClient;
   }
 
@@ -70,7 +79,18 @@ class MetricsService {
         return Promise.reject(ErrorBuilder.notFoundError('La Tribu no tiene repositorios que cumplan con la cobertura necesaria.'));
       }
 
-      const res = mapMetricByTribeToRepositoryMetricsDto(data);
+      // Get the ids to mock the verification status
+      const repositoryIds = data.repositories.map((repo) => (repo.id)).join(',');
+
+      // Request the mocked values of verification status
+      const verificationStatus = await this._httpService.get<IVerifiedReposDTO>(`/repos?ids=${repositoryIds}`);
+
+      // Create dictionary with the results
+      const verificationDict = Object.fromEntries(verificationStatus.data.repositories.map(
+        (x) => [x.id, x.state]
+      ));
+
+      const res = mapMetricByTribeToRepositoryMetricsDto(data, verificationDict);
       return Promise.resolve(res);
     } catch (error) {
       console.error(error);

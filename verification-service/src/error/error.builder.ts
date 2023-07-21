@@ -2,7 +2,7 @@ import { AppError } from './app.error';
 import { StatusCodes } from '../data/enum';
 
 /**
- * Class used to build different GraphQL errors
+ * Class used to build different errors
  */
 class ErrorBuilder {
   /**

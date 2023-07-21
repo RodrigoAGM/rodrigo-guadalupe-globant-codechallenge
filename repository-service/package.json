@@ -8,8 +8,10 @@
     "lint": "eslint src/**/*.ts --fix",
     "build": "yarn test && tsc -p tsconfig.build.json",
     "test": "jest --coverage --config jest.config.ts",
-    "start": "node ./dist/index.js",
-    "dev": "nodemon"
+    "start": "yarn migrate:prod && node ./dist/index.js",
+    "dev": "yarn migrate:dev && nodemon",
+    "migrate:prod": "prisma migrate deploy",
+    "migrate:dev": "prisma migrate dev"
   },
   "dependencies": {
     "@prisma/client": "^5.0.0",
@@ -28,6 +30,7 @@
     "eslint-config-airbnb-base": "^15.0.0",
     "eslint-plugin-import": "^2.27.5",
     "nodemon": "^3.0.1",
+    "prisma": "^5.0.0",
     "ts-node": "^10.9.1",
     "typescript": "^5.1.6"
   }

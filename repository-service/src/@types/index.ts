@@ -36,6 +36,13 @@ type RequestOptions = {
   nextOptions?: object;
 };
 
+/**
+ * Defined symbols to map instances with dependency injection
+ */
+const Symbols = {
+  HttpService: Symbol.for('HttpService'),
+};
+
 export {
-  ApiResponse, Maybe, RequestOptions,
+  ApiResponse, Maybe, RequestOptions, Symbols,
 };

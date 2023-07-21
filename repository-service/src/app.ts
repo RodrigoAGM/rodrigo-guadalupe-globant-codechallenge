@@ -2,8 +2,10 @@ import Express, { Application } from 'express';
 import { Server } from 'http';
 import { json } from 'body-parser';
 import morgan from 'morgan';
+import { PrismaClient } from '@prisma/client';
 import environment from './environment';
 import { initRoutes } from './routes';
+import { appContainer } from './config/inversify.container';
 
 export class App {
   /** Express application instance */
@@ -45,6 +47,13 @@ export class App {
     // Close server
     server.close(() => {
       console.info('Server closed');
+
+      // Close prisma client connection
+      const prismaClient = appContainer.get(PrismaClient);
+      prismaClient?.$disconnect().then(() => console.info('Prisma client closed'));
+
+      // Remove container bindings
+      appContainer.unbindAll();
     });
   }
 

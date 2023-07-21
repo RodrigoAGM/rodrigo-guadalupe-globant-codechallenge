@@ -69,6 +69,15 @@ abstract class Controller {
     return res.status(StatusCodes.SUCCESS).send(data);
   }
 
+  protected sendCSVFile(
+    res: Response,
+    data: string
+  ): Response {
+    res.setHeader('Content-Type', 'text/csv');
+    res.setHeader('Content-Disposition', 'attatchment; filename=report.csv');
+    return res.status(StatusCodes.SUCCESS).end(data);
+  }
+
   protected sendError(
     res: Response,
     error: AppError

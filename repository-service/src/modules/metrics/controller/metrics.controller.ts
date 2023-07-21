@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import { injectable } from 'inversify';
+import { Parser } from '@json2csv/plainjs';
 import { HTTPMethods } from '../../../data/enum';
 import { Controller } from '../../base/controller/controller.base';
 import { MetricsService } from '../service/metrics.service';
@@ -14,7 +15,7 @@ class MetricsController extends Controller {
 
   routes = [
     {
-      path: '/tribe/:tribeId',
+      path: '/tribe/:tribeId/:format?',
       method: HTTPMethods.GET,
       handler: this.handleGetTribeMetrics.bind(this),
     },
@@ -31,7 +32,7 @@ class MetricsController extends Controller {
   async handleGetTribeMetrics(req: Request, res: Response) {
     try {
       // Get tribe id from params
-      const { tribeId } = req.params;
+      const { tribeId, format } = req.params;
 
       // Get query
       const { minCoverage, repositoryState, creationYear } = req.query;
@@ -48,6 +49,8 @@ class MetricsController extends Controller {
       const cleanCreationYear = creationYear && !Number.isNaN(Number(creationYear))
         ? Number(creationYear) : new Date().getUTCFullYear();
 
+      const isCSV = !!(format && format.toString().trim() === 'csv');
+
       // Get data from the service
       const data = await this._service.getByTribe(
         cleanId,
@@ -56,7 +59,14 @@ class MetricsController extends Controller {
         cleanMinCoverage,
       );
 
-      super.sendSuccess(res, { success: true, data });
+      if (isCSV) {
+        const csvParser = new Parser({ header: true });
+        const csvData = csvParser.parse(data.repositories);
+
+        super.sendCSVFile(res, csvData);
+      } else {
+        super.sendSuccess(res, { success: true, data });
+      }
     } catch (error: any) {
       console.error('Something went wrong when getting metrics', { error });
       super.sendError(res, error);

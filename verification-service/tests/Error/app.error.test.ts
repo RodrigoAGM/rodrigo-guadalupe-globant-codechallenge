@@ -1,5 +1,4 @@
 /* eslint-disable no-undef */
-
 import { AppError } from '../../src/error/app.error';
 
 describe('AppError tests', () => {

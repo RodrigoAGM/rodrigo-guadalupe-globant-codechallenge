@@ -1,4 +1,3 @@
-import 'reflect-metadata';
 import { Config } from 'jest';
 
 const config: Config = {

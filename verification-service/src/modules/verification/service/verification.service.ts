@@ -1,3 +1,4 @@
+import { injectable } from 'inversify';
 import { IVerifiedRepoDTO, IVerifiedReposDTO } from '../dtos/verification.dto';
 import { randomNumberFromInterval } from '../../../utils/random.value';
 import { ErrorBuilder } from '../../../error/error.builder';
@@ -5,6 +6,7 @@ import { ErrorBuilder } from '../../../error/error.builder';
 /**
  * Service used to execute Verification operations
  */
+@injectable()
 class VerificationService {
   /**
    * Get all repositories with its state

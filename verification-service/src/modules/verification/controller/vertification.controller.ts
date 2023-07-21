@@ -1,11 +1,13 @@
 import { Request, Response } from 'express';
+import { injectable } from 'inversify';
 import { HTTPMethods } from '../../../data/enum';
 import { Controller } from '../../base/controller/controller.base';
 import { VerificationService } from '../service/verification.service';
 
+@injectable()
 class VerificationController extends Controller {
   /** Verification service instance */
-  private service: VerificationService;
+  private readonly _service: VerificationService;
 
   path = '/';
 
@@ -17,9 +19,12 @@ class VerificationController extends Controller {
     },
   ];
 
-  constructor() {
+  /**
+   * @param {VerificationService} service Verification service
+   */
+  constructor(service: VerificationService) {
     super();
-    this.service = new VerificationService();
+    this._service = service;
   }
 
   async handleGetRepos(req: Request, res: Response) {
@@ -30,7 +35,7 @@ class VerificationController extends Controller {
       const cleanIds = ids ? ids.toString().split(',') : [];
 
       // Get data from the service
-      const data = await this.service.get(cleanIds);
+      const data = await this._service.get(cleanIds);
 
       super.sendSuccess(res, { success: true, data });
     } catch (error: any) {

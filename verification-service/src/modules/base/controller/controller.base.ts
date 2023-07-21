@@ -2,6 +2,7 @@
 import {
   Response, Request, NextFunction, Router,
 } from 'express';
+import { injectable } from 'inversify';
 import { HTTPMethods, StatusCodes } from '../../../data/enum';
 import { AppError } from '../../../error/app.error';
 import { ApiResponse } from '../../../@types';
@@ -16,6 +17,7 @@ interface IRoute {
   ) => Promise<void>;
 }
 
+@injectable()
 abstract class Controller {
   public router: Router;
 

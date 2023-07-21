@@ -73,11 +73,10 @@ abstract class Controller {
     res: Response,
     error: AppError
   ): Response {
-    return res.status(error.statusCode || StatusCodes.INTERNAL_ERROR).send(
-      error.message || {
-        message: 'Something went wrong.',
-      }
-    );
+    return res.status(error.statusCode || StatusCodes.INTERNAL_ERROR).send({
+      success: false,
+      message: error.message ?? 'Something went wrong.',
+    });
   }
 }
 

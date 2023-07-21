@@ -5,7 +5,7 @@ import { VerificationController } from '../modules/verification/controller/verti
 /** Depency injection container */
 const appContainer = new Container();
 
-// Transaction (Transient)
+// Verification (Transient)
 appContainer.bind(VerificationService).toSelf();
 appContainer.bind(VerificationController).toSelf();
 

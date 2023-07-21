@@ -14,24 +14,24 @@ class VerificationService {
    * @returns {Promise<IVerifiedReposDTO>} A Promise with the repositores and its state
    */
   async get(ids: string[]): Promise<IVerifiedReposDTO> {
-    try {
-      const repositories: IVerifiedRepoDTO[] = [];
+    const repositories: IVerifiedRepoDTO[] = [];
 
-      // Iterate the received ids to return a mocked response
-      ids.forEach((id) => {
-        if (!id) return;
+    // Iterate the received ids to return a mocked response
+    ids.forEach((id) => {
+      if (!id) return;
+      if (Number.isNaN(Number(id))) return;
 
-        // Get verification status
-        const state = verificationStatusMock[id] ?? 605;
+      // Get verification status
+      const state = verificationStatusMock[id] ?? 605;
 
-        repositories.push({ id: Number(id), state });
-      });
+      repositories.push({ id: Number(id), state });
+    });
 
-      return Promise.resolve({ repositories });
-    } catch (error) {
-      console.error(error);
-      return Promise.reject(ErrorBuilder.internalError('Error while getting transaction'));
+    if (ids.length === 0 || repositories.length === 0) {
+      return Promise.reject(ErrorBuilder.badRequestError('No se han enviado ids válidas.'));
     }
+
+    return Promise.resolve({ repositories });
   }
 }
 

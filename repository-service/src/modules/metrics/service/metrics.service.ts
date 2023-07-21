@@ -32,13 +32,13 @@ class MetricsService {
 
   /**
    * Get all repository metrics with the tribeId
-   * @param {string} tribeId The id of the tribe to check
+   * @param {number} tribeId The id of the tribe to check
    * @param {RepositoryState} repositoryState Filter for repository state (default: Enabled)
    * @param {number} minCoverage Filter for repository min coverage (default: 0.75)
    * @returns {Promise<IRepositoryMetricsDTO>} A Promise with the repositores and its metrics
    */
   async getByTribe(
-    tribeId: string,
+    tribeId: number,
     creationYear: number,
     repositoryState: RepositoryState = RepositoryState.E,
     minCoverage: number = 0.75,
@@ -52,14 +52,12 @@ class MetricsService {
         return Promise.reject(ErrorBuilder.badRequestError('El valor de coverage no puede ser negativo'));
       }
 
-      const parsedTribeId = !Number.isNaN(Number(tribeId)) ? Number(tribeId) : null;
-
-      if (!parsedTribeId) {
-        return Promise.reject(ErrorBuilder.badRequestError('El id proporcionado es inválido.'));
+      if (tribeId < 0) {
+        return Promise.reject(ErrorBuilder.notFoundError('El id enviado no es válido.'));
       }
 
       const data = await this._client.tribe.findUnique({
-        where: { id: parsedTribeId },
+        where: { id: tribeId },
         include: {
           repositories: {
             include: { metric: true },

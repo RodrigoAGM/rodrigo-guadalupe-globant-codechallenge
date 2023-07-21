@@ -38,7 +38,7 @@ class MetricsController extends Controller {
       const { minCoverage, repositoryState, creationYear } = req.query;
 
       // Parse the received values
-      const cleanId = tribeId ? tribeId.toString() : '';
+      const cleanId = tribeId && !Number.isNaN(Number(tribeId)) ? Number(tribeId) : -1;
 
       const cleanRepositoryState = repositoryState
         ? naturalLanguageTorepositoryState(repositoryState.toString()) : undefined;

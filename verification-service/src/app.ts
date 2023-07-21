@@ -3,6 +3,7 @@ import { Server } from 'http';
 import { json } from 'body-parser';
 import morgan from 'morgan';
 import environment from './environment';
+import { initRoutes } from './routes';
 
 export class App {
   /** Express application instance */
@@ -18,11 +19,18 @@ export class App {
 
     // Setup middlewares
     this.middleware();
+
+    // Setup routes
+    this.routes();
   }
 
   settings() {
     // Set port
     this.app.set('port', this.port || environment.PORT || 3005);
+  }
+
+  routes() {
+    initRoutes(this.app);
   }
 
   middleware() {

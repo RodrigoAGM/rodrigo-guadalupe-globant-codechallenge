@@ -45,18 +45,18 @@ class MetricsService {
   ): Promise<IRepositoryMetricsDTO> {
     try {
       if (minCoverage > 1) {
-        return Promise.reject(ErrorBuilder.badRequestError('El valor de coverage no puede ser mayor a 1'));
+        return Promise.reject(ErrorBuilder.badRequestError('El valor de coverage no puede ser mayor a 1.'));
       }
 
       if (minCoverage < 0) {
-        return Promise.reject(ErrorBuilder.badRequestError('El valor de coverage no puede ser negativo'));
+        return Promise.reject(ErrorBuilder.badRequestError('El valor de coverage no puede ser negativo.'));
       }
 
       if (tribeId < 0) {
         return Promise.reject(ErrorBuilder.notFoundError('El id enviado no es válido.'));
       }
 
-      const data = await this._client.tribe.findUnique({
+      const data = await this._client.tribe.findUniqueOrThrow({
         where: { id: tribeId },
         include: {
           repositories: {
@@ -73,10 +73,6 @@ class MetricsService {
           organization: true,
         },
       });
-
-      if (!data) {
-        return Promise.reject(ErrorBuilder.notFoundError('La Tribu no se encuentra registrada.'));
-      }
 
       if (data.repositories.length === 0) {
         return Promise.reject(ErrorBuilder.notFoundError('La Tribu no tiene repositorios que cumplan con la cobertura necesaria.'));
@@ -95,8 +91,11 @@ class MetricsService {
 
       const res = mapMetricByTribeToRepositoryMetricsDto(data, verificationDict);
       return Promise.resolve(res);
-    } catch (error) {
+    } catch (error: any) {
       console.error(error);
+      if (error.code && error.code === 'P2025') {
+        return Promise.reject(ErrorBuilder.notFoundError('La Tribu no se encuentra registrada.'));
+      }
       return Promise.reject(ErrorBuilder.internalError('Ocurrió un error al intentar obtener las métricas.'));
     }
   }

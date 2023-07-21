@@ -39,7 +39,7 @@ const buildMetrics = (
  * @param status Status of the repository
  * @returns Structure to create repository
  */
-const buildRepository = (id: number, state: RepositoryState, status: RepositoryStatus) => (
+const buildRepository = (id: string, state: RepositoryState, status: RepositoryStatus) => (
   {
     name: `Repository ${id}`,
     state,
@@ -47,7 +47,7 @@ const buildRepository = (id: number, state: RepositoryState, status: RepositoryS
     metric: {
       create: {
         ...buildMetrics(
-          randomNumberFromInterval(10, 100) / 100,
+          randomNumberFromInterval(30, 100) / 100,
           randomNumberFromInterval(0, 10),
           randomNumberFromInterval(0, 10),
           randomNumberFromInterval(0, 10),
@@ -64,16 +64,16 @@ const buildRepository = (id: number, state: RepositoryState, status: RepositoryS
  * @param status Status of the tribe
  * @returns Structure to create a tribe
  */
-const buildTribe = (id: number, status: number) => (
+const buildTribe = (id: string, status: number) => (
   {
     name: `Tribe ${id}`,
     status,
     repositories: {
       create: [
-        buildRepository(1, RepositoryState.A, RepositoryStatus.I),
-        buildRepository(2, RepositoryState.D, RepositoryStatus.A),
-        buildRepository(3, RepositoryState.E, RepositoryStatus.A),
-        buildRepository(3, RepositoryState.A, RepositoryStatus.A),
+        buildRepository(`${id}1`, RepositoryState.A, RepositoryStatus.I),
+        buildRepository(`${id}2`, RepositoryState.D, RepositoryStatus.I),
+        buildRepository(`${id}3`, RepositoryState.E, RepositoryStatus.A),
+        buildRepository(`${id}4`, RepositoryState.E, RepositoryStatus.A),
       ],
     },
   }
@@ -91,7 +91,7 @@ const buildOrganization = (id: number) => ({
     name: `Organization ${id}`,
     status: 1,
     tribes: {
-      create: [buildTribe(1, 1), buildTribe(2, 1), buildTribe(3, 0)],
+      create: [buildTribe(`${id}1`, 1), buildTribe(`${id}2`, 0)],
     },
   },
 });

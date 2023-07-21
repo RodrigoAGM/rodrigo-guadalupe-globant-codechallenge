@@ -34,18 +34,27 @@ class MetricsController extends Controller {
       const { tribeId } = req.params;
 
       // Get query
-      const { minCoverage, repositoryState } = req.query;
+      const { minCoverage, repositoryState, creationYear } = req.query;
 
       // Parse the received values
       const cleanId = tribeId ? tribeId.toString() : '';
-      const cleanRepositoryState = repositoryState ? naturalLanguageTorepositoryState(
-        repositoryState.toString()
-      ) : undefined;
+
+      const cleanRepositoryState = repositoryState
+        ? naturalLanguageTorepositoryState(repositoryState.toString()) : undefined;
+
       const cleanMinCoverage = minCoverage && !Number.isNaN(Number(minCoverage))
         ? Number(minCoverage) : undefined;
 
+      const cleanCreationYear = creationYear && !Number.isNaN(Number(creationYear))
+        ? Number(creationYear) : new Date().getUTCFullYear();
+
       // Get data from the service
-      const data = await this._service.getByTribe(cleanId, cleanRepositoryState, cleanMinCoverage);
+      const data = await this._service.getByTribe(
+        cleanId,
+        cleanCreationYear,
+        cleanRepositoryState,
+        cleanMinCoverage,
+      );
 
       super.sendSuccess(res, { success: true, data });
     } catch (error: any) {

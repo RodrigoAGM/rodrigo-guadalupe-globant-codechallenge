@@ -39,8 +39,9 @@ class MetricsService {
    */
   async getByTribe(
     tribeId: string,
+    creationYear: number,
     repositoryState: RepositoryState = RepositoryState.E,
-    minCoverage: number = 0.75
+    minCoverage: number = 0.75,
   ): Promise<IRepositoryMetricsDTO> {
     try {
       if (minCoverage > 1) {
@@ -64,6 +65,10 @@ class MetricsService {
             include: { metric: true },
             where: {
               state: repositoryState,
+              createTime: {
+                gte: new Date(`${creationYear}-01-01`),
+                lte: new Date(`${creationYear}-12-31`),
+              },
               metric: { coverage: { gte: minCoverage } },
             },
           },

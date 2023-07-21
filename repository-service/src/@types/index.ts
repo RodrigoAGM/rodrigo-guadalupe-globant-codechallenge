@@ -21,4 +21,21 @@ type ApiResponse<T> = {
   data: T;
 };
 
-export { ApiResponse, Maybe };
+/**
+ * Requests options provided for HTTP requests.
+ */
+type RequestOptions = {
+  /**
+   * Object with HTTP params to include in the request
+   */
+  params?: { [key: string]: number | string | boolean };
+  /**
+   * Object with HTTP headers to include in the request
+   */
+  headers?: { [key: string]: number | string | boolean };
+  nextOptions?: object;
+};
+
+export {
+  ApiResponse, Maybe, RequestOptions,
+};
